@@ -4,6 +4,10 @@ import domain.Friendship;
 import domain.validators.Validator;
 import repository.Repository;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 
 public class FriendshipsDbRepository implements Repository<Long, Friendship> {
@@ -22,23 +26,38 @@ public class FriendshipsDbRepository implements Repository<Long, Friendship> {
 
     }
 
-    @Override
-    public Friendship findOne(Long id) {
-        return null;
-    }
-
-    @Override
-    public List<Friendship> findAll() {
-        return null;
-    }
 
     @Override
     public Friendship save(Friendship entity) {
+        if (entity == null)
+            throw new IllegalArgumentException("entity must be not null");
+        validator.validate(entity);
+        String sql = "insert into friendships ( friend_one_id, friend_two_id) values (?, ?)";
+        try {
+            Connection connection = DriverManager.getConnection(url, username, password);
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setLong(1, entity.getId1());
+            preparedStatement.setLong(2, entity.getId2());
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         return null;
     }
 
     @Override
-    public Friendship delete(Long id) {
+    public Friendship delete(Long aLong) {
+        if (aLong == null)
+            throw new IllegalArgumentException("id must be not null");
+        String sql = "delete from friendships where id = ?";
+        try {Connection connection = DriverManager.getConnection(url, username, password);
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setLong(1, aLong);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
@@ -49,6 +68,16 @@ public class FriendshipsDbRepository implements Repository<Long, Friendship> {
 
     @Override
     public List<Friendship> getFriends(Friendship user) {
+        return null;
+    }
+
+    @Override
+    public Friendship findOne(Long id) {
+        return null;
+    }
+
+    @Override
+    public List<Friendship> findAll() {
         return null;
     }
 }
