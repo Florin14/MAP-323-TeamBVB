@@ -1,13 +1,11 @@
 package repository.db;
 
 import domain.Friendship;
+import domain.User;
 import domain.validators.Validator;
 import repository.Repository;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.List;
 
 public class FriendshipsDbRepository implements Repository<Long, Friendship> {
@@ -62,6 +60,26 @@ public class FriendshipsDbRepository implements Repository<Long, Friendship> {
     }
 
     @Override
+    public Friendship findOne(Long id) {
+        if (id == null)
+            throw new IllegalArgumentException("id must be not null");
+        String sql = "select * from friendships where id = ? ";
+        try {Connection connection = DriverManager.getConnection(url, username, password);
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setLong(1, id);
+            ResultSet resultSet = ps.executeQuery();
+            resultSet.next();
+
+            Long friendOneId = resultSet.getLong("friend_one_id");
+            Long friendTwoId = resultSet.getLong("friend_two_id");
+
+            return new Friendship(friendOneId, friendTwoId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    @Override
     public Friendship update(Friendship entity) {
         return null;
     }
@@ -71,10 +89,6 @@ public class FriendshipsDbRepository implements Repository<Long, Friendship> {
         return null;
     }
 
-    @Override
-    public Friendship findOne(Long id) {
-        return null;
-    }
 
     @Override
     public List<Friendship> findAll() {

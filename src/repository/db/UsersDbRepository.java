@@ -5,10 +5,7 @@ import domain.User;
 import domain.validators.Validator;
 import repository.Repository;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,9 +76,50 @@ public class UsersDbRepository implements Repository<Long, User> {
 
         return null;
     }
-
     @Override
     public User update(User entity) {
+        if (entity == null)
+            throw new IllegalArgumentException("entity must be not null");
+        validator.validate(entity);
+        String sql = "update users set first_name = ?, last_name = ? where id = ?";
+        try{Connection connection = DriverManager.getConnection(url, username, password);
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
+            preparedStatement.setString(1,entity.getFirstName());
+            preparedStatement.setString(2, entity.getLastName());
+            preparedStatement.setLong(3, entity.getId());
+
+            preparedStatement.executeUpdate();
+
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+
+        entities.put(entity.getId(), entity);
+        if (entities.get(entity.getId()) != null) {
+            entities.put(entity.getId(), entity);
+        }
+        return null;
+    }
+
+    @Override
+    public User findOne(Long aLong) {
+        if (aLong == null)
+            throw new IllegalArgumentException("ID must be not null");
+        String sql = "select * from users where id = ? ";
+        try {Connection connection = DriverManager.getConnection(url, username, password);
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setLong(1, aLong);
+            ResultSet resultSet = ps.executeQuery();
+            resultSet.next();
+
+            String firstName = resultSet.getString("first_name");
+            String lastName = resultSet.getString("last_name");
+
+            return new User(firstName, lastName);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
@@ -90,10 +128,7 @@ public class UsersDbRepository implements Repository<Long, User> {
         return null;
     }
 
-    @Override
-    public User findOne(Long id) {
-        return null;
-    }
+
 
     @Override
     public List<User> findAll() {
