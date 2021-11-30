@@ -6,6 +6,7 @@ import domain.validators.Validator;
 import repository.Repository;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,19 +18,18 @@ public class UsersDbRepository implements Repository<Long, User> {
 
     private final Validator<User> validator;
 
-    private final FriendshipsDbRepository friendshipsDbRepository ;
+    private final FriendshipsDbRepository friendshipsDbRepository;
     protected Map<Long, User> entities;
 
-    public UsersDbRepository(String url, String username, String password, FriendshipsDbRepository friendshipsDbRepository,Validator<User> validator) {
+    public UsersDbRepository(String url, String username, String password, FriendshipsDbRepository friendshipsDbRepository, Validator<User> validator) {
         this.url = url;
         this.username = username;
         this.password = password;
-        this.friendshipsDbRepository= friendshipsDbRepository;
-        this.validator= validator;
+        this.friendshipsDbRepository = friendshipsDbRepository;
+        this.validator = validator;
 
         entities = new HashMap<>();
     }
-
 
 
     @Override
@@ -46,14 +46,15 @@ public class UsersDbRepository implements Repository<Long, User> {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        User user = new User(entity.getFirstName(),entity.getLastName());
+        User user = new User(entity.getFirstName(), entity.getLastName());
         entities.put(entity.getId(), user);
 
         return null;
     }
+
     @Override
     public User delete(Long aLong) {
-        if(aLong == null){
+        if (aLong == null) {
             throw new IllegalArgumentException("deleted entity doesn't exist");
         }
 
@@ -67,8 +68,8 @@ public class UsersDbRepository implements Repository<Long, User> {
             e.printStackTrace();
         }
         List<Friendship> friendships = friendshipsDbRepository.findAll();
-        for(Friendship friendship:friendships){
-            if(friendship.getId1().equals(aLong) || friendship.getId2().equals(aLong) ){
+        for (Friendship friendship : friendships) {
+            if (friendship.getId1().equals(aLong) || friendship.getId2().equals(aLong)) {
                 friendshipsDbRepository.delete(friendship.getId());
             }
         }
@@ -76,22 +77,24 @@ public class UsersDbRepository implements Repository<Long, User> {
 
         return null;
     }
+
     @Override
     public User update(User entity) {
         if (entity == null)
             throw new IllegalArgumentException("entity must be not null");
         validator.validate(entity);
         String sql = "update users set first_name = ?, last_name = ? where id = ?";
-        try{Connection connection = DriverManager.getConnection(url, username, password);
+        try {
+            Connection connection = DriverManager.getConnection(url, username, password);
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
-            preparedStatement.setString(1,entity.getFirstName());
+            preparedStatement.setString(1, entity.getFirstName());
             preparedStatement.setString(2, entity.getLastName());
             preparedStatement.setLong(3, entity.getId());
 
             preparedStatement.executeUpdate();
 
-        }catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
@@ -107,7 +110,8 @@ public class UsersDbRepository implements Repository<Long, User> {
         if (aLong == null)
             throw new IllegalArgumentException("ID must be not null");
         String sql = "select * from users where id = ? ";
-        try {Connection connection = DriverManager.getConnection(url, username, password);
+        try {
+            Connection connection = DriverManager.getConnection(url, username, password);
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setLong(1, aLong);
             ResultSet resultSet = ps.executeQuery();
@@ -124,14 +128,42 @@ public class UsersDbRepository implements Repository<Long, User> {
     }
 
     @Override
-    public List<User> getFriends(User user) {
-        return null;
+    public List<User> findAll() {
+        List<User> users = new ArrayList<>();
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement statement = connection.prepareStatement("SELECT * from users");
+             ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+                Long id = resultSet.getLong("id");
+                String firstName = resultSet.getString("first_name");
+                String lastName = resultSet.getString("last_name");
+                User user = new User(firstName, lastName);
+                user.setId(id);
+                users.add(user);
+            }
+            return users;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return users;
     }
 
-
-
     @Override
-    public List<User> findAll() {
-        return null;
+    public List<User> getFriends(User user) {
+        List<Friendship> friendships = friendshipsDbRepository.findAll();
+        List<User> users = new ArrayList<>();
+        for (Friendship friendship : friendships) {
+            if (friendship.getId1().equals(user.getId())) {
+                User user2 = this.findOne(friendship.getId2());
+                user2.setId(friendship.getId2());
+                users.add(user2);
+            }
+            if (friendship.getId2().equals(user.getId())) {
+                User user3 = this.findOne(friendship.getId1());
+                user3.setId(friendship.getId1());
+                users.add(user3);
+            }
+        }
+        return users;
     }
 }

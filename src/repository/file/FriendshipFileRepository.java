@@ -11,7 +11,7 @@ public class FriendshipFileRepository extends AbstractFileRepository<Long, Frien
     private static Long nextId = 0L;
 
     public FriendshipFileRepository(String fileName, Validator<Friendship> validator) {
-        super(fileName,validator);
+        super(fileName, validator);
         nextId++;
     }
 

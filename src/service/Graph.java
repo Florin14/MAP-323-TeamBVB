@@ -39,10 +39,10 @@ public class Graph {
         }
 
         for (User user : users) {
-           List<User> friends = service.getFriends(user);
-           for(User user1:friends){
-               addEdge(user.getId(), user1.getId());
-           }
+            List<User> friends = service.getFriends(user);
+            for (User user1 : friends) {
+                addEdge(user.getId(), user1.getId());
+            }
         }
     }
 

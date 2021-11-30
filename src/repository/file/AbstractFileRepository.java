@@ -13,6 +13,7 @@ public abstract class AbstractFileRepository<Long, E extends Entity<Long>> exten
     private final String fileName;
 
     protected abstract E lineToEntity(String line);
+
     protected abstract String entityToLine(E entity);
 
     public AbstractFileRepository(String fileName, Validator<E> validator) {
@@ -69,7 +70,7 @@ public abstract class AbstractFileRepository<Long, E extends Entity<Long>> exten
 
     @Override
     public E delete(Long id) {
-        List<E> entities= loadFromFile();
+        List<E> entities = loadFromFile();
         E e = findOne(id);
         if (e == null) {
             throw new IllegalArgumentException("deleted entity doesn't exist");
@@ -86,8 +87,8 @@ public abstract class AbstractFileRepository<Long, E extends Entity<Long>> exten
         if (id == null) {
             throw new IllegalArgumentException("this id doesn't exist");
         }
-        for (E entity : loadFromFile()){
-            if(entity.getId().equals(id)) {
+        for (E entity : loadFromFile()) {
+            if (entity.getId().equals(id)) {
                 return entity;
             }
         }

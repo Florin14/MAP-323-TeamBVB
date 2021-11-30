@@ -14,7 +14,7 @@ public class UserFileRepository extends AbstractFileRepository<Long, User> {
     private final FriendshipFileRepository friendshipFileRepository;
 
     public UserFileRepository(String fileName, FriendshipFileRepository friendshipFileRepository, Validator<User> validator) {
-        super(fileName,validator);
+        super(fileName, validator);
         this.friendshipFileRepository = friendshipFileRepository;
         nextId++;
     }

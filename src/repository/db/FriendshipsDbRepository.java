@@ -6,6 +6,7 @@ import domain.validators.Validator;
 import repository.Repository;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class FriendshipsDbRepository implements Repository<Long, Friendship> {
@@ -16,11 +17,11 @@ public class FriendshipsDbRepository implements Repository<Long, Friendship> {
 
     private final Validator<Friendship> validator;
 
-    public FriendshipsDbRepository(String url, String username, String password,Validator<Friendship> validator) {
+    public FriendshipsDbRepository(String url, String username, String password, Validator<Friendship> validator) {
         this.url = url;
         this.username = username;
         this.password = password;
-        this.validator=validator;
+        this.validator = validator;
 
     }
 
@@ -49,7 +50,8 @@ public class FriendshipsDbRepository implements Repository<Long, Friendship> {
         if (aLong == null)
             throw new IllegalArgumentException("id must be not null");
         String sql = "delete from friendships where id = ?";
-        try {Connection connection = DriverManager.getConnection(url, username, password);
+        try {
+            Connection connection = DriverManager.getConnection(url, username, password);
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setLong(1, aLong);
             ps.executeUpdate();
@@ -64,7 +66,8 @@ public class FriendshipsDbRepository implements Repository<Long, Friendship> {
         if (id == null)
             throw new IllegalArgumentException("id must be not null");
         String sql = "select * from friendships where id = ? ";
-        try {Connection connection = DriverManager.getConnection(url, username, password);
+        try {
+            Connection connection = DriverManager.getConnection(url, username, password);
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setLong(1, id);
             ResultSet resultSet = ps.executeQuery();
@@ -79,19 +82,39 @@ public class FriendshipsDbRepository implements Repository<Long, Friendship> {
         }
         return null;
     }
+
     @Override
     public Friendship update(Friendship entity) {
         return null;
     }
 
     @Override
-    public List<Friendship> getFriends(Friendship user) {
-        return null;
+    public List<Friendship> findAll() {
+        List<Friendship> friendships = new ArrayList<>();
+        try {
+            Connection connection = DriverManager.getConnection(url, username, password);
+            PreparedStatement statement = connection.prepareStatement("SELECT * from friendships");
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                Long id = resultSet.getLong("id");
+                Long friendOneId = resultSet.getLong("friend_one_id");
+                Long friendTwoId = resultSet.getLong("friend_two_id");
+                Friendship friendship = new Friendship(friendOneId, friendTwoId);
+                friendship.setId(id);
+                friendships.add(friendship);
+            }
+            return friendships;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return friendships;
     }
 
 
     @Override
-    public List<Friendship> findAll() {
+    public List<Friendship> getFriends(Friendship friendship) {
         return null;
     }
+
 }

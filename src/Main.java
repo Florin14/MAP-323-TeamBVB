@@ -15,9 +15,9 @@ import ui.UI;
 public class Main {
 
     public static void main(String[] args) {
-        //FriendshipFileRepository friendshipFileRepository1 = new FriendshipFileRepository("data/friendships.csv",new FriendshipValidator());
-        //Repository<Long,User> userRepository = new UserFileRepository("data/users.csv",friendshipFileRepository1,new UserValidator());
-        //Repository<Long,Friendship> friendshipRepository = new FriendshipFileRepository("data/friendships.csv",new FriendshipValidator());
+ //        FriendshipFileRepository friendshipFileRepository1 = new FriendshipFileRepository("data/friendships.csv",new FriendshipValidator());
+////        Repository<Long,User> userRepository = new UserFileRepository("data/users.csv",friendshipFileRepository1,new UserValidator());
+////       Repository<Long,Friendship> friendshipRepository = new FriendshipFileRepository("data/friendships.csv",new FriendshipValidator());
 
         FriendshipsDbRepository friendshipRepository1 = new FriendshipsDbRepository("jdbc:postgresql://localhost:5432/laborator", "postgres", "postgre", new FriendshipValidator());
         Repository<Long, Friendship> friendshipRepository = new FriendshipsDbRepository("jdbc:postgresql://localhost:5432/laborator", "postgres", "postgre", new FriendshipValidator());

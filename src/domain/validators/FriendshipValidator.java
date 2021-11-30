@@ -14,7 +14,7 @@ public class FriendshipValidator implements Validator<Friendship> {
         if (entity.getId1().equals(entity.getId2())) {
             message += "User id's can't be equal!";
         }
-        if (entity.getId1() <= 0 || entity.getId2() <=0) {
+        if (entity.getId1() <= 0 || entity.getId2() <= 0) {
             message += "User id's can't be negative!";
         }
 

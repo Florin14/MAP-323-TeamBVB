@@ -54,7 +54,7 @@ public class UI {
 
         System.out.println("New lastname:");
         String newLastName = scanner.nextLine();
-        service.updateUser(id,newFirstName, newLastName);
+        service.updateUser(id, newFirstName, newLastName);
     }
 
     private void addFriendshipUI() {

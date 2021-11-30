@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class InMemoryRepository<Long,E extends Entity<Long>> implements Repository<Long,E> {
+public class InMemoryRepository<Long, E extends Entity<Long>> implements Repository<Long, E> {
     private final Validator<E> validator;
     private Map<Long, E> entities;
 
@@ -31,7 +31,7 @@ public class InMemoryRepository<Long,E extends Entity<Long>> implements Reposito
     @Override
     public E delete(Long id) {
         E entity = entities.get(id);
-        if(entity==null){
+        if (entity == null) {
             throw new IllegalArgumentException("deleted entity doesn't exist");
         }
         entities.remove(id);
@@ -62,7 +62,7 @@ public class InMemoryRepository<Long,E extends Entity<Long>> implements Reposito
     }
 
     @Override
-    public List<E> getFriends(E user){
+    public List<E> getFriends(E user) {
         return null;
     }
 
