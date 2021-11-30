@@ -7,8 +7,6 @@ import domain.validators.UserValidator;
 import repository.Repository;
 import repository.db.FriendshipsDbRepository;
 import repository.db.UsersDbRepository;
-import repository.file.FriendshipFileRepository;
-import repository.file.UserFileRepository;
 import service.Service;
 import ui.UI;
 
