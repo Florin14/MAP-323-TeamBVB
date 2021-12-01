@@ -12,19 +12,16 @@ import java.util.List;
 import java.util.Map;
 
 public class UsersDbRepository implements Repository<Long, User> {
-    private final String url;
-    private final String username;
-    private final String password;
+    protected Map<Long, User> entities;
 
     private final Validator<User> validator;
 
     private final FriendshipsDbRepository friendshipsDbRepository;
-    protected Map<Long, User> entities;
 
-    public UsersDbRepository(String url, String username, String password, FriendshipsDbRepository friendshipsDbRepository, Validator<User> validator) {
-        this.url = url;
-        this.username = username;
-        this.password = password;
+    private final Connection connection;
+
+    public UsersDbRepository(Connection connection, FriendshipsDbRepository friendshipsDbRepository, Validator<User> validator) {
+        this.connection = connection;
         this.friendshipsDbRepository = friendshipsDbRepository;
         this.validator = validator;
 
@@ -38,8 +35,8 @@ public class UsersDbRepository implements Repository<Long, User> {
             throw new IllegalArgumentException("entity must be not null");
         validator.validate(entity);
         String sql = "insert into users (first_name, last_name ) values (?, ?)";
-        try (Connection connection = DriverManager.getConnection(url, username, password);
-             PreparedStatement ps = connection.prepareStatement(sql)) {
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, entity.getFirstName());
             ps.setString(2, entity.getLastName());
             ps.executeUpdate();
@@ -60,7 +57,6 @@ public class UsersDbRepository implements Repository<Long, User> {
 
         String sql = "delete from users where id = ?";
         try {
-            Connection connection = DriverManager.getConnection(url, username, password);
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setLong(1, aLong);
             ps.executeUpdate();
@@ -85,7 +81,6 @@ public class UsersDbRepository implements Repository<Long, User> {
         validator.validate(entity);
         String sql = "update users set first_name = ?, last_name = ? where id = ?";
         try {
-            Connection connection = DriverManager.getConnection(url, username, password);
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
             preparedStatement.setString(1, entity.getFirstName());
@@ -111,7 +106,6 @@ public class UsersDbRepository implements Repository<Long, User> {
             throw new IllegalArgumentException("ID must be not null");
         String sql = "select * from users where id = ? ";
         try {
-            Connection connection = DriverManager.getConnection(url, username, password);
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setLong(1, aLong);
             ResultSet resultSet = ps.executeQuery();
@@ -130,9 +124,9 @@ public class UsersDbRepository implements Repository<Long, User> {
     @Override
     public List<User> findAll() {
         List<User> users = new ArrayList<>();
-        try (Connection connection = DriverManager.getConnection(url, username, password);
-             PreparedStatement statement = connection.prepareStatement("SELECT * from users");
-             ResultSet resultSet = statement.executeQuery()) {
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT * from users");
+            ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 Long id = resultSet.getLong("id");
                 String firstName = resultSet.getString("first_name");

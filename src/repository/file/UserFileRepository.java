@@ -19,24 +19,6 @@ public class UserFileRepository extends AbstractFileRepository<Long, User> {
         nextId++;
     }
 
-    @Override
-    protected User lineToEntity(String line) {
-        String[] attributes = line.split(",");
-        long id = Long.parseLong(attributes[0]);
-        if (id > nextId) {
-            nextId = id;
-        }
-        String firstName = attributes[1];
-        String lastName = attributes[2];
-        User user = new User(firstName, lastName);
-        user.setId(Long.parseLong(attributes[0]));
-        return user;
-    }
-
-    @Override
-    protected String entityToLine(User user) {
-        return user.getId() + "," + user.getFirstName() + "," + user.getLastName();
-    }
 
     @Override
     public User save(User entity) {
@@ -89,6 +71,25 @@ public class UserFileRepository extends AbstractFileRepository<Long, User> {
             }
         }
         return users;
+    }
+
+    @Override
+    protected User lineToEntity(String line) {
+        String[] attributes = line.split(",");
+        long id = Long.parseLong(attributes[0]);
+        if (id > nextId) {
+            nextId = id;
+        }
+        String firstName = attributes[1];
+        String lastName = attributes[2];
+        User user = new User(firstName, lastName);
+        user.setId(Long.parseLong(attributes[0]));
+        return user;
+    }
+
+    @Override
+    protected String entityToLine(User user) {
+        return user.getId() + "," + user.getFirstName() + "," + user.getLastName();
     }
 
 }

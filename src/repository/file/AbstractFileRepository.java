@@ -10,50 +10,18 @@ import java.util.List;
 
 
 public abstract class AbstractFileRepository<Long, E extends Entity<Long>> extends InMemoryRepository<Long, E> {
-    private final String fileName;
 
     protected abstract E lineToEntity(String line);
 
     protected abstract String entityToLine(E entity);
+
+    private final String fileName;
 
     public AbstractFileRepository(String fileName, Validator<E> validator) {
         super(validator);
         this.fileName = fileName;
         loadFromFile();
     }
-
-    private List<E> loadFromFile() {
-        List<E> entities = new ArrayList<>();
-
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(this.fileName))) {
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                try {
-                    entities.add(lineToEntity(line));
-                } catch (RuntimeException ignored) {
-                    System.out.println(ignored.getMessage());
-                }
-            }
-        } catch (IOException exception) {
-            exception.printStackTrace();
-        }
-        return entities;
-    }
-
-    private void saveToFile(List<E> entities) {
-
-        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(this.fileName, false))) {
-            for (E entity : entities) {
-
-                bufferedWriter.write(entityToLine(entity));
-                bufferedWriter.newLine();
-            }
-            bufferedWriter.flush();
-        } catch (IOException exception) {
-            exception.printStackTrace();
-        }
-    }
-
 
     @Override
     public E save(E entity) {
@@ -98,5 +66,37 @@ public abstract class AbstractFileRepository<Long, E extends Entity<Long>> exten
     @Override
     public List<E> findAll() {
         return loadFromFile();
+    }
+
+    private List<E> loadFromFile() {
+        List<E> entities = new ArrayList<>();
+
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(this.fileName))) {
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                try {
+                    entities.add(lineToEntity(line));
+                } catch (RuntimeException ignored) {
+                    System.out.println(ignored.getMessage());
+                }
+            }
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
+        return entities;
+    }
+
+    private void saveToFile(List<E> entities) {
+
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(this.fileName, false))) {
+            for (E entity : entities) {
+
+                bufferedWriter.write(entityToLine(entity));
+                bufferedWriter.newLine();
+            }
+            bufferedWriter.flush();
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
     }
 }

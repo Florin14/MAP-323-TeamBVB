@@ -16,26 +16,6 @@ public class FriendshipFileRepository extends AbstractFileRepository<Long, Frien
     }
 
     @Override
-    protected Friendship lineToEntity(String line) {
-        String[] attributes = line.split(",");
-        long id = Long.parseLong(attributes[0]);
-        if (id > nextId) {
-            nextId = id;
-        }
-        long friendOneId = Long.parseLong(attributes[1]);
-        long friendTwoId = Long.parseLong(attributes[2]);
-        Friendship friendship = new Friendship(friendOneId, friendTwoId);
-        friendship.setId(id);
-        return friendship;
-    }
-
-    @Override
-    protected String entityToLine(Friendship friendship) {
-        return friendship.getId() + "," + friendship.getId1() + "," + friendship.getId2();
-    }
-
-
-    @Override
     public Friendship save(Friendship entity) {
         entity.setId(nextId);
         nextId++;
@@ -61,6 +41,25 @@ public class FriendshipFileRepository extends AbstractFileRepository<Long, Frien
     @Override
     public List<Friendship> findAll() {
         return super.findAll();
+    }
+
+    @Override
+    protected Friendship lineToEntity(String line) {
+        String[] attributes = line.split(",");
+        long id = Long.parseLong(attributes[0]);
+        if (id > nextId) {
+            nextId = id;
+        }
+        long friendOneId = Long.parseLong(attributes[1]);
+        long friendTwoId = Long.parseLong(attributes[2]);
+        Friendship friendship = new Friendship(friendOneId, friendTwoId);
+        friendship.setId(id);
+        return friendship;
+    }
+
+    @Override
+    protected String entityToLine(Friendship friendship) {
+        return friendship.getId() + "," + friendship.getId1() + "," + friendship.getId2();
     }
 }
 

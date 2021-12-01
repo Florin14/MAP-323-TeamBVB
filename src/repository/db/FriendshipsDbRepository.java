@@ -11,16 +11,12 @@ import java.util.List;
 
 public class FriendshipsDbRepository implements Repository<Long, Friendship> {
 
-    private final String url;
-    private final String username;
-    private final String password;
+    private final Connection connection;
 
     private final Validator<Friendship> validator;
 
-    public FriendshipsDbRepository(String url, String username, String password, Validator<Friendship> validator) {
-        this.url = url;
-        this.username = username;
-        this.password = password;
+    public FriendshipsDbRepository(Connection connection, Validator<Friendship> validator) {
+        this.connection = connection;
         this.validator = validator;
 
     }
@@ -33,7 +29,6 @@ public class FriendshipsDbRepository implements Repository<Long, Friendship> {
         validator.validate(entity);
         String sql = "insert into friendships ( friend_one_id, friend_two_id) values (?, ?)";
         try {
-            Connection connection = DriverManager.getConnection(url, username, password);
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setLong(1, entity.getId1());
             preparedStatement.setLong(2, entity.getId2());
@@ -51,7 +46,6 @@ public class FriendshipsDbRepository implements Repository<Long, Friendship> {
             throw new IllegalArgumentException("id must be not null");
         String sql = "delete from friendships where id = ?";
         try {
-            Connection connection = DriverManager.getConnection(url, username, password);
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setLong(1, aLong);
             ps.executeUpdate();
@@ -67,7 +61,6 @@ public class FriendshipsDbRepository implements Repository<Long, Friendship> {
             throw new IllegalArgumentException("id must be not null");
         String sql = "select * from friendships where id = ? ";
         try {
-            Connection connection = DriverManager.getConnection(url, username, password);
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setLong(1, id);
             ResultSet resultSet = ps.executeQuery();
@@ -92,7 +85,6 @@ public class FriendshipsDbRepository implements Repository<Long, Friendship> {
     public List<Friendship> findAll() {
         List<Friendship> friendships = new ArrayList<>();
         try {
-            Connection connection = DriverManager.getConnection(url, username, password);
             PreparedStatement statement = connection.prepareStatement("SELECT * from friendships");
             ResultSet resultSet = statement.executeQuery();
 
