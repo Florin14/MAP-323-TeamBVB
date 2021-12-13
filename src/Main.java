@@ -1,39 +1,48 @@
+import domain.FriendRequest;
 import domain.Friendship;
 import domain.User;
+import domain.validators.FriendRequestValidator;
 import domain.validators.FriendshipValidator;
 import domain.validators.UserValidator;
 
 
 import repository.Repository;
+import repository.db.FriendRequestDbRepository;
 import repository.db.FriendshipsDbRepository;
 import repository.db.UsersDbRepository;
 import service.Service;
 import ui.UI;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class Main {
-    public static final String url = "jdbc:postgresql://localhost:5432/laborator";
-    public static final String user = "postgres";
-    public static final String password = "postgres";
-
     public static void main(String[] args) throws SQLException {
-//        FriendshipFileRepository friendshipFileRepository1 = new FriendshipFileRepository("data/friendships.csv", new FriendshipValidator());
-//        Repository<Long, User> userRepository = new UserFileRepository("data/users.csv", friendshipFileRepository1, new UserValidator());
-//        Repository<Long, Friendship> friendshipRepository = new FriendshipFileRepository("data/friendships.csv", new FriendshipValidator());
-        Connection connection = DriverManager.getConnection(url, user, password);
+        try {
+            BufferedReader br = new BufferedReader(new FileReader("Data/database.csv"));
+            String user = br.readLine();
+            String password = br.readLine();
+            String url = br.readLine();
 
-        FriendshipsDbRepository friendshipRepository1 = new FriendshipsDbRepository(connection, new FriendshipValidator());
-        Repository<Long, Friendship> friendshipRepository = new FriendshipsDbRepository(connection, new FriendshipValidator());
-        Repository<Long, User> userRepository = new UsersDbRepository(connection, friendshipRepository1, new UserValidator());
+            Connection connection = DriverManager.getConnection(url, user, password);
 
-        Service service = new Service(userRepository, friendshipRepository);
+            FriendshipsDbRepository friendshipRepository1 = new FriendshipsDbRepository(connection, new FriendshipValidator());
 
-        UI ui = new UI(service);
+            Repository<Long, Friendship> friendshipRepository = new FriendshipsDbRepository(connection, new FriendshipValidator());
+            Repository<Long, User> userRepository = new UsersDbRepository(connection, friendshipRepository1, new UserValidator());
+            Repository<Long, FriendRequest> friendRequestRepository = new FriendRequestDbRepository(connection, new FriendRequestValidator());
+            Service service = new Service(userRepository, friendshipRepository, friendRequestRepository);
 
-        ui.menu();
+            UI ui = new UI(service);
+
+            ui.menu();
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
+        }
 
     }
 }
