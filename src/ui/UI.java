@@ -113,6 +113,23 @@ public class UI {
         friendship.forEach(System.out::println);
     }
 
+    public void getFriendshipRelationsUI() {
+        showAllUI();
+        System.out.println("Give user's id: ");
+        Long id = scanner.nextLong();
+        List<Friendship> relations = service.getFriendshipRelations(id);
+        for (Friendship friendship : relations) {
+            if (friendship.getId1().equals(id)) {
+                User user = service.findOne(friendship.getId2());
+                System.out.println("\nFirstname: " + user.getFirstName() + "\nLastname: " + user.getLastName() + "\nFriendship date: " + friendship.getFriendshipDate());
+            } else {
+                User user = service.findOne(friendship.getId1());
+                System.out.println("\nFirstname: " + user.getFirstName() + "\nLastname: " + user.getLastName() + "\nFriendship date: " + friendship.getFriendshipDate());
+
+            }
+        }
+    }
+
     private void menuPrint() {
         System.out.println("Menu: ");
         System.out.println("1. Add an user");
@@ -124,7 +141,8 @@ public class UI {
         System.out.println("7. Show all users");
         System.out.println("8. Show all friendships");
         System.out.println("9. Update an user");
-        System.out.println("10. Exit\n");
+        System.out.println("10. Get friendship relations");
+        System.out.println("11. Exit\n");
         System.out.println("Choose option:");
     }
 
@@ -143,7 +161,8 @@ public class UI {
                 case "7" -> showAllUI();
                 case "8" -> showAllFriendshipsUI();
                 case "9" -> updateUserNameUI();
-                case "10" -> bool = false;
+                case "10" -> getFriendshipRelationsUI();
+                case "11" -> bool = false;
                 default -> {
                 }
             }

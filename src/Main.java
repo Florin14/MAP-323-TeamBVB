@@ -17,7 +17,7 @@ import java.sql.SQLException;
 public class Main {
     public static final String url = "jdbc:postgresql://localhost:5432/laborator";
     public static final String user = "postgres";
-    public static final String password = "postgres";
+    public static final String password = "postgre";
 
     public static void main(String[] args) throws SQLException {
 //        FriendshipFileRepository friendshipFileRepository1 = new FriendshipFileRepository("data/friendships.csv", new FriendshipValidator());
