@@ -6,6 +6,7 @@ import repository.Repository;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.function.Predicate;
 
 public class Service {
     private final Repository<Long, User> userRepository;
@@ -84,4 +85,11 @@ public class Service {
         return this.friendshipRepository.findAll();
     }
 
+    public List<Friendship> getFriendshipRelations(Long aLong) {
+        List<Friendship> getAll = friendshipRepository.findAll();
+        Predicate<Friendship> filterCriteria = x -> Objects.equals(x.getId1(), aLong) || Objects.equals(x.getId2(), aLong);
+        return getAll.stream()
+                .filter(filterCriteria)
+                .toList();
+    }
 }
