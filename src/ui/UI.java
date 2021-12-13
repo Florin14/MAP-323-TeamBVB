@@ -1,6 +1,8 @@
 package ui;
 
+import domain.FriendRequest;
 import domain.Friendship;
+import domain.Status;
 import domain.User;
 import domain.validators.ValidationException;
 import service.Graph;
@@ -147,6 +149,46 @@ public class UI {
             }
         }
     }
+    private void sendFriendRequestUI() {
+        showAllUI();
+
+        try {
+            System.out.println("Give the id of the first user:");
+            Long id1 = scanner.nextLong();
+            System.out.println("Give the id of the second user: ");
+            Long id2 = scanner.nextLong();
+            this.service.sendFriendRequest(id1, id2);
+            System.out.println("The friend request was sent!");
+        } catch (IllegalArgumentException | NullPointerException | ValidationException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void deleteFriendRequestUI() {
+        showAllFriendRequestsUI();
+        System.out.println("Give the id for the friend request to be deleted: ");
+        Long id = scanner.nextLong();
+        this.service.deleteFriendRequests(id);
+    }
+
+    private void updateFriendRequestsUI() {
+        showAllFriendRequestsUI();
+        System.out.println("Give the id for the friend request to be updated: ");
+        String id = scanner.nextLine();
+        System.out.println("Accept the friend request?(Y/N)");
+        String accept = scanner.nextLine();
+        if ("Y".equals(accept) || "y".equals(accept)) {
+            this.service.updateFriendRequest(Long.valueOf(id), Status.APPROVED);
+        } else if ("N".equals(accept) || "n".equals(accept)) {
+            this.service.updateFriendRequest(Long.valueOf(id), Status.REJECTED);
+        } else {
+            System.out.println("Wrong option!");
+        }
+    }
+    private void showAllFriendRequestsUI() {
+        List<FriendRequest> getAll = this.service.printAllFriendRequests();
+        getAll.forEach(System.out::println);
+    }
 
     private void menuPrint() {
         System.out.println("Menu: ");
@@ -160,8 +202,19 @@ public class UI {
         System.out.println("8. Show all friendships");
         System.out.println("9. Update an user");
         System.out.println("10. Get friendship relations");
-        System.out.println("11. Get friendhsip relations by month");
-        System.out.println("12. Exit\n");
+        System.out.println("11. Get friendship relations By Month");
+        System.out.println("----------------------------");
+        System.out.println("12. Send a message");
+        System.out.println("13. Delete message");
+        System.out.println("14. Show conversation");
+        System.out.println("15. Show all messages");
+        System.out.println("----------------------------");
+        System.out.println("16. Send friend request");
+        System.out.println("17. Delete friend request");
+        System.out.println("18. Update friend request");
+        System.out.println("19. Show all friend requests");
+        System.out.println("----------------------------");
+        System.out.println("20. Exit\n");
         System.out.println("Choose option:");
     }
 
@@ -182,7 +235,11 @@ public class UI {
                 case "9" -> updateUserNameUI();
                 case "10" -> getFriendshipRelationsUI();
                 case "11" -> getFriendshipRelationsByMonth();
-                case "12" -> bool = false;
+                case "16" -> sendFriendRequestUI();
+                case "17" -> deleteFriendRequestUI();
+                case "18" -> updateFriendRequestsUI();
+                case "19" -> showAllFriendRequestsUI();
+                case "20" -> bool = false;
                 default -> {
                 }
             }
