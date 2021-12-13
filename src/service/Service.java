@@ -1,24 +1,25 @@
 package service;
 
-import domain.FriendRequest;
-import domain.Friendship;
-import domain.Status;
-import domain.User;
+import domain.*;
 import repository.Repository;
 
 import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class Service {
     private final Repository<Long, User> userRepository;
     private final Repository<Long, Friendship> friendshipRepository;
     private final Repository<Long, FriendRequest> friendRequestRepository;
+    private final Repository<Long, Message> messageRepository;
 
-    public Service(Repository<Long, User> userRepository, Repository<Long, Friendship> friendshipRepository, Repository<Long, FriendRequest> friendRequestRepository) {
+
+    public Service(Repository<Long, User> userRepository, Repository<Long, Friendship> friendshipRepository, Repository<Long, FriendRequest> friendRequestRepository, Repository<Long, Message> messageRepository) {
         this.userRepository = userRepository;
         this.friendshipRepository = friendshipRepository;
         this.friendRequestRepository = friendRequestRepository;
+        this.messageRepository = messageRepository;
     }
 
     public void saveUser(String firstName, String lastName) {
@@ -96,6 +97,7 @@ public class Service {
                 .filter(filterCriteria)
                 .toList();
     }
+
     public List<Friendship> getFriendshipRelationsByMonth(Long aLong, int month) {
         List<Friendship> getAll = friendshipRepository.findAll();
         Predicate<Friendship> filterById = x -> Objects.equals(x.getId1(), aLong) || Objects.equals(x.getId2(), aLong);
@@ -105,6 +107,44 @@ public class Service {
                 .filter(filterCriteria)
                 .toList();
     }
+
+    public void sendMessage(Long from, Long to, String text) {
+        if (from == null || to == null) {
+            throw new IllegalArgumentException("Id's must be not null");
+        }
+        List<Message> conversation = showConversation(from, to);
+        Message newMessage = new Message(from, to, text, LocalDate.now(), 0L);
+        if (conversation.size() == 0 || conversation.get(conversation.size() - 1).getFrom().equals(from)) {
+            newMessage.setReply(0L);
+        } else {
+            newMessage.setReply(to);
+        }
+        this.messageRepository.save(newMessage);
+    }
+
+    public void deleteMessage(Long id) {
+        this.messageRepository.delete(id);
+    }
+
+    public List<Message> printAllMessages() {
+        return messageRepository.findAll();
+    }
+
+    public List<Message> showConversation(Long id1, Long id2) {
+        List<Message> conversation = new ArrayList<>();
+        for (Message message : printAllMessages()) {
+            if ((message.getFrom().equals(id1) && message.getTo().equals(id2)) || (message.getFrom().equals(id2) && message.getTo().equals(id1))) {
+                conversation.add(message);
+            }
+        }
+        List<Message> sortedMessages = conversation.stream()
+                .sorted(Comparator.comparing(Message::getDate))
+                .collect(Collectors.toList());
+
+        return sortedMessages;
+    }
+
+
     public void sendFriendRequest(Long id1, Long id2) {
         boolean ok = true;
         if (id1 == null || id2 == null) {

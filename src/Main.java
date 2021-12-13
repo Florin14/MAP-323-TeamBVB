@@ -1,14 +1,17 @@
 import domain.FriendRequest;
 import domain.Friendship;
+import domain.Message;
 import domain.User;
 import domain.validators.FriendRequestValidator;
 import domain.validators.FriendshipValidator;
+import domain.validators.MessageValidator;
 import domain.validators.UserValidator;
 
 
 import repository.Repository;
 import repository.db.FriendRequestDbRepository;
 import repository.db.FriendshipsDbRepository;
+import repository.db.MessageDbRepository;
 import repository.db.UsersDbRepository;
 import service.Service;
 import ui.UI;
@@ -34,8 +37,9 @@ public class Main {
 
             Repository<Long, Friendship> friendshipRepository = new FriendshipsDbRepository(connection, new FriendshipValidator());
             Repository<Long, User> userRepository = new UsersDbRepository(connection, friendshipRepository1, new UserValidator());
+            Repository<Long, Message> messageRepository = new MessageDbRepository(connection, new MessageValidator());
             Repository<Long, FriendRequest> friendRequestRepository = new FriendRequestDbRepository(connection, new FriendRequestValidator());
-            Service service = new Service(userRepository, friendshipRepository, friendRequestRepository);
+            Service service = new Service(userRepository, friendshipRepository, friendRequestRepository, messageRepository);
 
             UI ui = new UI(service);
 

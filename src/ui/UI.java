@@ -1,9 +1,6 @@
 package ui;
 
-import domain.FriendRequest;
-import domain.Friendship;
-import domain.Status;
-import domain.User;
+import domain.*;
 import domain.validators.ValidationException;
 import service.Graph;
 import service.Service;
@@ -86,6 +83,41 @@ public class UI {
         }
     }
 
+    private void addMessageUI() {
+        showAllUI();
+        try {
+            System.out.println("Message from user with id: ");
+            String from = scanner.nextLine();
+            System.out.println(" to user with id:");
+            String to = scanner.nextLine();
+            System.out.println("What do you want to say?");
+            String text = scanner.nextLine();
+            this.service.sendMessage(Long.parseLong(from), Long.parseLong(to), text);
+            System.out.println("The message was send!");
+
+        } catch (IllegalArgumentException | NullPointerException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void deleteMessageUI() {
+        showAllMessagesUI();
+        System.out.println("Give the message id to delete:");
+        Long id = scanner.nextLong();
+        this.service.deleteMessage(id);
+        System.out.println("Message deleted!");
+
+    }
+
+    private void showConversationUI() {
+        System.out.println("The conversation between user with id:");
+        Long id1 = scanner.nextLong();
+        System.out.println(" and user with id: ");
+        Long id2 = scanner.nextLong();
+        List<Message> conversation = this.service.showConversation(id1, id2);
+        conversation.forEach(System.out::println);
+    }
+
 
     public void getNrOfConnectedComponents() {
         Graph graph = new Graph(this.service);
@@ -131,6 +163,7 @@ public class UI {
             }
         }
     }
+
     public void getFriendshipRelationsByMonth() {
         showAllUI();
         System.out.println("Give user's id: ");
@@ -149,6 +182,7 @@ public class UI {
             }
         }
     }
+
     private void sendFriendRequestUI() {
         showAllUI();
 
@@ -185,10 +219,17 @@ public class UI {
             System.out.println("Wrong option!");
         }
     }
+
     private void showAllFriendRequestsUI() {
         List<FriendRequest> getAll = this.service.printAllFriendRequests();
         getAll.forEach(System.out::println);
     }
+
+    private void showAllMessagesUI() {
+        List<Message> getAll = this.service.printAllMessages();
+        getAll.forEach(System.out::println);
+    }
+
 
     private void menuPrint() {
         System.out.println("Menu: ");
@@ -235,6 +276,10 @@ public class UI {
                 case "9" -> updateUserNameUI();
                 case "10" -> getFriendshipRelationsUI();
                 case "11" -> getFriendshipRelationsByMonth();
+                case "12" -> addMessageUI();
+                case "13" -> deleteMessageUI();
+                case "14" -> showConversationUI();
+                case "15" -> showAllMessagesUI();
                 case "16" -> sendFriendRequestUI();
                 case "17" -> deleteFriendRequestUI();
                 case "18" -> updateFriendRequestsUI();
