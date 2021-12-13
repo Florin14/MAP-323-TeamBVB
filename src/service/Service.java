@@ -4,6 +4,7 @@ import domain.Friendship;
 import domain.User;
 import repository.Repository;
 
+import java.time.LocalDate;
 import java.util.*;
 
 public class Service {
@@ -55,8 +56,8 @@ public class Service {
         if (ok) {
             user1.makeFriend(user2);
             user2.makeFriend(user1);
-            this.friendshipRepository.save(new Friendship(id1, id2));
-        }
+            this.friendshipRepository.save(new Friendship(id1, id2, LocalDate.now()));
+    }
     }
 
     public void deleteUser(Long id) {

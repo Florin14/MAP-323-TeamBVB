@@ -39,12 +39,12 @@ public class InMemoryRepository<Long, E extends Entity<Long>> implements Reposit
     }
 
     @Override
-    public E update(E entity) {
+    public void update(E entity) {
         if (entity == null)
             throw new IllegalArgumentException("entity must be not null!");
         validator.validate(entity);
 
-        return null;
+
     }
 
 

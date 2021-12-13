@@ -14,7 +14,7 @@ public interface Repository<Long, E extends Entity<Long>> {
 
     E delete(Long id);
 
-    E update(E entity);
+    void update(E entity);
 
     List<E> getFriends(E user);
 }

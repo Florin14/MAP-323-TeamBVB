@@ -75,7 +75,7 @@ public class UsersDbRepository implements Repository<Long, User> {
     }
 
     @Override
-    public User update(User entity) {
+    public void update(User entity) {
         if (entity == null)
             throw new IllegalArgumentException("entity must be not null");
         validator.validate(entity);
@@ -97,7 +97,6 @@ public class UsersDbRepository implements Repository<Long, User> {
         if (entities.get(entity.getId()) != null) {
             entities.put(entity.getId(), entity);
         }
-        return null;
     }
 
     @Override
