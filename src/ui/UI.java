@@ -113,13 +113,15 @@ public class UI {
         friendship.forEach(System.out::println);
     }
 
-    public void getFriendshipRelationsUI() {
+    public void getFriendshipRelationsByMonth() {
         showAllUI();
         System.out.println("Give user's id: ");
-        Long id = scanner.nextLong();
-        List<Friendship> relations = service.getFriendshipRelations(id);
+        String id = scanner.nextLine();
+        System.out.println("Give friendship's month(1-12) ");
+        String month = scanner.nextLine();
+        List<Friendship> relations = service.getFriendshipRelationsByMonth(Long.valueOf(id), Integer.parseInt(month));
         for (Friendship friendship : relations) {
-            if (friendship.getId1().equals(id)) {
+            if (friendship.getId1().equals(Long.valueOf(id))) {
                 User user = service.findOne(friendship.getId2());
                 System.out.println("\nFirstname: " + user.getFirstName() + "\nLastname: " + user.getLastName() + "\nFriendship date: " + friendship.getFriendshipDate());
             } else {
@@ -128,7 +130,6 @@ public class UI {
 
             }
         }
-
     }
 
     private void menuPrint() {
@@ -142,20 +143,7 @@ public class UI {
         System.out.println("7. Show all users");
         System.out.println("8. Show all friendships");
         System.out.println("9. Update an user");
-        System.out.println("10. Get friendship relations");
-        System.out.println("11. Get friendship relations By Month");
-        System.out.println("----------------------------");
-        System.out.println("12. Send a message");
-        System.out.println("13. Delete message");
-        System.out.println("14. Show conversation");
-        System.out.println("15. Show all messages");
-        System.out.println("----------------------------");
-        System.out.println("16. Send friend request");
-        System.out.println("17. Delete friend request");
-        System.out.println("18. Update friend request");
-        System.out.println("19. Show all friend requests");
-        System.out.println("----------------------------");
-        System.out.println("20. Exit\n");
+        System.out.println("10. Exit\n");
         System.out.println("Choose option:");
     }
 
@@ -174,12 +162,13 @@ public class UI {
                 case "7" -> showAllUI();
                 case "8" -> showAllFriendshipsUI();
                 case "9" -> updateUserNameUI();
-                case "10" -> getFriendshipRelationsUI();
-                case "11" -> bool = false;
+                case "11" -> getFriendshipRelationsByMonth();
+                case "10" -> bool = false;
                 default -> {
                 }
             }
         }
     }
+
 
 }
