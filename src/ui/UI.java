@@ -113,6 +113,25 @@ public class UI {
         friendship.forEach(System.out::println);
     }
 
+    public void getFriendshipRelationsByMonth() {
+        showAllUI();
+        System.out.println("Give user's id: ");
+        String id = scanner.nextLine();
+        System.out.println("Give friendship's month(1-12) ");
+        String month = scanner.nextLine();
+        List<Friendship> relations = service.getFriendshipRelationsByMonth(Long.valueOf(id), Integer.parseInt(month));
+        for (Friendship friendship : relations) {
+            if (friendship.getId1().equals(Long.valueOf(id))) {
+                User user = service.findOne(friendship.getId2());
+                System.out.println("\nFirstname: " + user.getFirstName() + "\nLastname: " + user.getLastName() + "\nFriendship date: " + friendship.getFriendshipDate());
+            } else {
+                User user = service.findOne(friendship.getId1());
+                System.out.println("\nFirstname: " + user.getFirstName() + "\nLastname: " + user.getLastName() + "\nFriendship date: " + friendship.getFriendshipDate());
+
+            }
+        }
+    }
+
     private void menuPrint() {
         System.out.println("Menu: ");
         System.out.println("1. Add an user");
@@ -143,11 +162,13 @@ public class UI {
                 case "7" -> showAllUI();
                 case "8" -> showAllFriendshipsUI();
                 case "9" -> updateUserNameUI();
+                case "11" -> getFriendshipRelationsByMonth();
                 case "10" -> bool = false;
                 default -> {
                 }
             }
         }
     }
+
 
 }

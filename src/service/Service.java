@@ -6,6 +6,7 @@ import repository.Repository;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.function.Predicate;
 
 public class Service {
     private final Repository<Long, User> userRepository;
@@ -82,6 +83,16 @@ public class Service {
 
     public List<Friendship> printAllFriendships() {
         return this.friendshipRepository.findAll();
+    }
+
+    public List<Friendship> getFriendshipRelationsByMonth(Long aLong, int month) {
+        List<Friendship> getAll = friendshipRepository.findAll();
+        Predicate<Friendship> filterById = x -> Objects.equals(x.getId1(), aLong) || Objects.equals(x.getId2(), aLong);
+        Predicate<Friendship> filterByMonth = x -> x.getFriendshipDate().getMonthValue() == month;
+        Predicate<Friendship> filterCriteria = filterById.and(filterByMonth);
+        return getAll.stream()
+                .filter(filterCriteria)
+                .toList();
     }
 
 }
