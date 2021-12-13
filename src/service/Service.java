@@ -58,7 +58,7 @@ public class Service {
             user1.makeFriend(user2);
             user2.makeFriend(user1);
             this.friendshipRepository.save(new Friendship(id1, id2, LocalDate.now()));
-    }
+        }
     }
 
     public void deleteUser(Long id) {
@@ -85,23 +85,4 @@ public class Service {
         return this.friendshipRepository.findAll();
     }
 
-<<<<<<<<< Temporary merge branch 1
-    public List<Friendship> getFriendshipRelations(Long aLong) {
-        List<Friendship> getAll = friendshipRepository.findAll();
-        Predicate<Friendship> filterCriteria = x -> Objects.equals(x.getId1(), aLong) || Objects.equals(x.getId2(), aLong);
-=========
-    public List<Friendship> getFriendshipRelationsByMonth(Long aLong, int month) {
-        List<Friendship> getAll = friendshipRepository.findAll();
-        Predicate<Friendship> filterById = x -> Objects.equals(x.getId1(), aLong) || Objects.equals(x.getId2(), aLong);
-        Predicate<Friendship> filterByMonth = x -> x.getFriendshipDate().getMonthValue() == month;
-        Predicate<Friendship> filterCriteria = filterById.and(filterByMonth);
->>>>>>>>> Temporary merge branch 2
-        return getAll.stream()
-                .filter(filterCriteria)
-                .toList();
-    }
-<<<<<<<<< Temporary merge branch 1
-=========
-
->>>>>>>>> Temporary merge branch 2
 }
